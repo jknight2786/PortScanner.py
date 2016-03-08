@@ -1,8 +1,9 @@
 #Jon Knight, IT567 Win2016, Port scanner
+#https://github.com/jknight2786/PortScanner.py
 #Performs port scanning on an IP address or range of IP addresses
 #IP range can be entered with net mask with slash notation, a range using -, or with a subnet mask using -s
-#Multiple ports can be entered after -p with a space inbetween
 #Ex: 192.168.1.0/24, 192.168.1.0-255, 192.168.1.0 -s 255.255.255.0 are all equivalent
+#Multiple ports can be entered after -p with a space inbetween
 #! /usr/bin/env python
 import sys
 import argparse
@@ -57,7 +58,7 @@ for host in IPvals:
 			print 'Error'
 	elif(args.traceroute):
 		#Performs TCP traceroute with 30 max hops
-		traceroute(host, maxttl=30)
+		traceroute(str(host), maxttl=30)
 	elif(args.xmas):
 		ip = ip/TCP(dport=port,flags="FPU")
 		response = sr1(ip, timeout=5)
@@ -126,13 +127,3 @@ for host in IPvals:
 					print 'Closed'
 				else:
 					print 'Filtered'
-
-
-		
-		
-	
-
-	
-	
-
-
