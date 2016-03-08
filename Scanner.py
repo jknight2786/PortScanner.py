@@ -17,7 +17,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('ip_address', help='IP address or range to scan')
 parser.add_argument('-s', '--subnet-mask', help='Subnet mask to use', metavar='subnet_mask')
 parser.add_argument('-p', metavar='Ports', help='Ports to scan', 
-default=80, type=int, nargs='+')
+default=[80], type=int, nargs='+')
 parser.add_argument('-t', '--traceroute', help='Performs a traceroute to the given host', action='store_true')
 parser.add_argument('--icmp', help='Uses icmp packets', action='store_true')
 parser.add_argument('--tcp', help='Uses tcp packets', default=True, action='store_true')
@@ -48,7 +48,7 @@ for host in IPvals:
 	ip = IP(dst=str(host))
 	if(args.icmp):
 		#ICMP packet (ping)
-		ip = ip/ICMP(dport=port)
+		ip = ip/ICMP()
 		response = sr1(ip, timeout=5)
 		if(str(type(response)) == "<type 'NoneType'>"):
 			print 'No response'
@@ -59,42 +59,6 @@ for host in IPvals:
 	elif(args.traceroute):
 		#Performs TCP traceroute with 30 max hops
 		traceroute(str(host), maxttl=30)
-	elif(args.xmas):
-		ip = ip/TCP(dport=port,flags="FPU")
-		response = sr1(ip, timeout=5)
-		#No response means port is open
-		if(str(type(response)) == "<type 'NoneType'>"):
-			print 'Open'
-		#Reset means port is closed
-		elif(response.haslayer(TCP) and response.getlayer(TCP).flags == 4):
-			print 'Closed'	
-		#Other response (ICMP error) means port is filtered
-		else:
-			print 'Filtered'
-	elif(args.fin):
-		ip = ip/TCP(dport=port,flags="F")
-		response = sr1(ip, timeout=5)
-		#No response means port is open
-		if(str(type(response)) == "<type 'NoneType'>"):
-			print 'Open'
-		#Reset means port is closed
-		elif(response.haslayer(TCP) and response.getlayer(TCP).flags == 4):
-			print 'Closed'	
-		#Other response (ICMP error) means port is filtered
-		else:
-			print 'Filtered'
-	elif(args.null):
-		ip = ip/TCP(dport=port,flags="")
-		response = sr1(ip, timeout=5)
-		#No response means port is open
-		if(str(type(response)) == "<type 'NoneType'>"):
-			print 'Open'
-		#Reset means port is closed
-		elif(response.haslayer(TCP) and response.getlayer(TCP).flags == 4):
-			print 'Closed'	
-		#Other response (ICMP error) means port is filtered
-		else:
-			print 'Filtered'			
 	else:
 		for port in args.p:
 			print 'Port ' + str(port) + ': '
@@ -112,7 +76,43 @@ for host in IPvals:
 					if(response.haslayer(ICMP) and response.getlayer(ICMP).code == 3):
 						print 'Closed'
 					else:
-						print 'Filtered'	
+						print 'Filtered'
+			elif(args.xmas):
+				ip = ip/TCP(dport=port,flags="FPU")
+				response = sr1(ip, timeout=5)
+				#No response means port is open
+				if(str(type(response)) == "<type 'NoneType'>"):
+					print 'Open'
+				#Reset means port is closed
+				elif(response.haslayer(TCP) and response.getlayer(TCP).flags == 4):
+					print 'Closed'	
+				#Other response (ICMP error) means port is filtered
+				else:
+					print 'Filtered'
+			elif(args.fin):
+				ip = ip/TCP(dport=port,flags="F")
+				response = sr1(ip, timeout=5)
+				#No response means port is open
+				if(str(type(response)) == "<type 'NoneType'>"):
+					print 'Open'
+				#Reset means port is closed
+				elif(response.haslayer(TCP) and response.getlayer(TCP).flags == 4):
+					print 'Closed'	
+				#Other response (ICMP error) means port is filtered
+				else:
+					print 'Filtered'
+			elif(args.null):
+				ip = ip/TCP(dport=port,flags="")
+				response = sr1(ip, timeout=5)
+				#No response means port is open
+				if(str(type(response)) == "<type 'NoneType'>"):
+					print 'Open'
+				#Reset means port is closed
+				elif(response.haslayer(TCP) and response.getlayer(TCP).flags == 4):
+					print 'Closed'	
+				#Other response (ICMP error) means port is filtered
+				else:
+					print 'Filtered'				
 			else:
 				#TCP Syn packet
 				ip = ip/TCP(dport=port,flags="S")
