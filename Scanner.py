@@ -27,7 +27,7 @@ parser.add_argument('--fin', help='Performs a FIN scan', action='store_true')
 parser.add_argument('--null', help='Performs a Null scan', action='store_true')
 
 args = parser.parse_args()
-print args
+#print args
 if "-" not in args.ip_address:
 	if args.subnet_mask != None:
 		IPvals = IPNetwork(args.ip_address + '/' + args.subnet_mask)
